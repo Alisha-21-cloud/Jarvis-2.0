@@ -1,6 +1,7 @@
 import datetime
 import time
 import webbrowser
+import pywhatkit
 import pyttsx3 #!pip install pyttsx3
 import speech_recognition as sr
 
@@ -91,6 +92,16 @@ def social_media(command):
         webbrowser.open("https://www.instagram.com/")
     else:
         speak("No result found")
+        
+        
+
+def play_youtube_video(command):
+    try:
+        query = command.replace("play", "").strip()
+        speak(f"Playing {query}")
+        pywhatkit.playonyt(query)
+    except Exception as e:
+        speak("Sorry, I couldn't play that video.")
 
 
 if __name__ == "__main__":
@@ -101,6 +112,8 @@ if __name__ == "__main__":
         query =input("Enter your command -> ")
         if ('facebook' in query) or ('discord' in query) or ('whatsapp' in query) or ('instagram' in query):
             social_media(query)
+        elif 'play' in query and 'youtube' in query:
+            play_youtube_video(query)
     
     
 # speak("Hello,I'm Friday")
