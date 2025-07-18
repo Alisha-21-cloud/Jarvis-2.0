@@ -5,6 +5,7 @@ import pywhatkit
 import pyautogui
 import pyttsx3 #!pip install pyttsx3
 import speech_recognition as sr
+import os
 import re
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from comtypes import CLSCTX_ALL
@@ -199,6 +200,38 @@ def process_volume_command(query):
             speak("I didn't catch the volume level. Try saying: set volume to 50")
     else:
         speak("Please say a valid volume command like 'set volume to 70' or 'mute volume'")
+        
+
+apps = {
+    "calculator": {
+        "path": "C:\\Windows\\System32\\calc.exe",
+        "process": "calc.exe"
+    },
+    "notepad": {
+        "path": "C:\\Windows\\System32\\notepad.exe",
+        "process": "notepad.exe"
+    },
+    "paint": {
+        "path": "C:\\Windows\\System32\\mspaint.exe",
+        "process": "mspaint.exe"
+    }
+}
+
+def openApp(command):
+    for app in apps:
+        if f"open {app}" in command:
+            speak(f"Opening {app}")
+            os.startfile(apps[app]["path"])
+            return
+    speak("Application not recognized to open.")
+
+def closeApp(command):
+    for app in apps:
+        if f"close {app}" in command:
+            speak(f"Closing {app}")
+            os.system(f'taskkill /f /im {apps[app]["process"]}')
+            return
+    speak("Application not recognized to close.")
 
 
 
@@ -216,6 +249,10 @@ if __name__ == "__main__":
             schedule()
         elif any(kw in query for kw in ["volume", "sound", "mute", "unmute"]):
             process_volume_command(query)
+        elif any(f"open {app}" in query for app in apps):
+            openApp(query)
+        elif any(f"close {app}" in query for app in apps):
+            closeApp(query)
 
 
     
