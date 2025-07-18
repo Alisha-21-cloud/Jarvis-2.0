@@ -1,4 +1,5 @@
 import datetime
+import sys
 import time
 import webbrowser
 import pywhatkit
@@ -253,6 +254,8 @@ if __name__ == "__main__":
             openApp(query)
         elif any(f"close {app}" in query for app in apps):
             closeApp(query)
+        elif "exit" in query:
+            sys.exit()
 
 
     
