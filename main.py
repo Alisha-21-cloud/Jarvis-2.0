@@ -2,8 +2,12 @@ import datetime
 import time
 import webbrowser
 import pywhatkit
+import pyautogui
 import pyttsx3 #!pip install pyttsx3
 import speech_recognition as sr
+import re
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from comtypes import CLSCTX_ALL
 
 def initialize_engine():
     engine = pyttsx3.init("sapi5")
@@ -128,11 +132,78 @@ def schedule():
         speak(week[day])
     else:
         speak("Boss, schedule unavailable. Maybe time-travel messed with the calendar!")
+        
+def get_volume_interface():
+    devices = AudioUtilities.GetSpeakers()
+    interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+    return interface.QueryInterface(IAudioEndpointVolume)
+
+def get_current_volume_percent():
+    volume = get_volume_interface()
+    current = volume.GetMasterVolumeLevelScalar()
+    return int(current * 100)
+
+def set_volume(percent):
+    percent = max(0, min(100, percent))  # Clamp between 0–100
+    volume = get_volume_interface()
+    volume.SetMasterVolumeLevelScalar(percent / 100.0, None)
+    speak(f"Volume set to {percent} percent")
+
+def increase_volume(step=10):
+    volume = get_volume_interface()
+    current = volume.GetMasterVolumeLevelScalar()
+    new_volume = min(1.0, current + step / 100.0)
+    volume.SetMasterVolumeLevelScalar(new_volume, None)
+    speak(f"Volume increased to {int(new_volume * 100)} percent")
+
+def decrease_volume(step=10):
+    volume = get_volume_interface()
+    current = volume.GetMasterVolumeLevelScalar()
+    new_volume = max(0.0, current - step / 100.0)
+    volume.SetMasterVolumeLevelScalar(new_volume, None)
+    speak(f"Volume decreased to {int(new_volume * 100)} percent")
+
+def mute_volume():
+    volume = get_volume_interface()
+    volume.SetMute(1, None)
+    speak("Volume muted")
+
+def unmute_volume():
+    volume = get_volume_interface()
+    volume.SetMute(0, None)
+    speak("Volume unmuted")
+
+def process_volume_command(query):
+    query = query.lower()
+    
+    if "mute" in query and "unmute" not in query:
+        mute_volume()
+    elif "unmute" in query:
+        unmute_volume()
+    elif "increase volume" in query or "volume up" in query:
+        increase_volume()
+    elif "decrease volume" in query or "volume down" in query:
+        decrease_volume()
+    elif "current volume" in query or "what's the volume" in query:
+        current = get_current_volume_percent()
+        speak(f"Current volume is {current} percent")
+    elif "set volume to" in query:
+        match = re.search(r"set volume to (\d+)", query)
+        if match:
+            vol = int(match.group(1))
+            if 0 <= vol <= 100:
+                set_volume(vol)
+            else:
+                speak("Please provide a volume between 0 and 100")
+        else:
+            speak("I didn't catch the volume level. Try saying: set volume to 50")
+    else:
+        speak("Please say a valid volume command like 'set volume to 70' or 'mute volume'")
 
 
 
 if __name__ == "__main__":
-    wishMe()
+    # wishMe()
     
     while True:
         # query = command().lower()
@@ -143,6 +214,9 @@ if __name__ == "__main__":
             play_youtube_video(query)
         elif any(phrase in query for phrase in ["university timetable", "schedule", "today's plan", "daily routine", "what's the schedule", "what's my plan","today's schedule", "things to do today", "my plans for today"]):
             schedule()
+        elif any(kw in query for kw in ["volume", "sound", "mute", "unmute"]):
+            process_volume_command(query)
+
 
     
     
