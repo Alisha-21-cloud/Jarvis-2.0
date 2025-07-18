@@ -102,6 +102,33 @@ def play_youtube_video(command):
         pywhatkit.playonyt(query)
     except Exception as e:
         speak("Sorry, I couldn't play that video.")
+        
+        
+def schedule():
+    day = cal_day().lower()
+    speak("Boss, here’s your personalized home study schedule for today.")
+
+    week = {
+        "monday": "Morning (9:00 - 11:00): ML/AI Course Study\nLate Morning (11:30 - 1:00): Project Development (JARVIS / Capstone)\nAfternoon (2:00 - 4:00): Coding Practice (DSA or LeetCode)\nEvening (5:00 - 6:30): Light Reading or UI Design Work\nNight (8:00 - 9:00): Recap and Plan for Tomorrow.",
+        
+        "tuesday": "Morning: Deep Work on AI/ML Concepts\nLate Morning: Work on Portfolio / GitHub Push\nAfternoon: Watch 1-2 YouTube Tech Talks or Lectures\nEvening: Practice Python or Java Problems\nNight: Quick Journal + Light Meditation.",
+        
+        "wednesday": "Morning: Read Research Papers / Articles\nLate Morning: Implement small AI project module\nAfternoon: Take mock interviews or contests\nEvening: UI/UX Design (Figma or React UI polish)\nNight: Free time or anime break!",
+        
+        "thursday": "Morning: Explore new tools/libraries (e.g., LangChain, PyTorch)\nLate Morning: Work on personal assistant features (JARVIS upgrades)\nAfternoon: Resume polishing / LinkedIn updates\nEvening: Code review or open source contribution\nNight: Plan weekend learning goals.",
+        
+        "friday": "Morning: Revise the week's topics\nLate Morning: Build or polish a side project\nAfternoon: UI/UX improvements or blog writing\nEvening: Chill session – music or gaming\nNight: Reflect and set weekend priorities.",
+        
+        "saturday": "Morning: Capstone or main project focus\nLate Morning: Attend webinars or courses\nAfternoon: Design + Code sprint (no distractions)\nEvening: Review Git commits and update Trello/Notion\nNight: Watch AI documentaries or inspiration videos.",
+        
+        "sunday": "Boss, today is recharge day 🧘‍♂️\nSleep well, eat well, relax.\nLight review if you want: Read or revise topics casually.\nPlan the upcoming week and do what brings you joy!"
+    }
+
+    if day in week:
+        speak(week[day])
+    else:
+        speak("Boss, schedule unavailable. Maybe time-travel messed with the calendar!")
+
 
 
 if __name__ == "__main__":
@@ -114,6 +141,9 @@ if __name__ == "__main__":
             social_media(query)
         elif 'play' in query and 'youtube' in query:
             play_youtube_video(query)
+        elif any(phrase in query for phrase in ["university timetable", "schedule", "today's plan", "daily routine", "what's the schedule", "what's my plan","today's schedule", "things to do today", "my plans for today"]):
+            schedule()
+
     
     
 # speak("Hello,I'm Friday")
