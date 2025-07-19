@@ -17,6 +17,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import random
 import numpy as np
 import webbrowser
+import psutil 
 
 with open("intents.json") as file:
     data = json.load(file)
@@ -277,6 +278,21 @@ def browsing(query):
             webbrowser.open(f"https://www.google.com/search?q={s}")
         else:
             speak("I didn't catch that. Please try again.")
+            
+def condition():
+    usage = str(psutil.cpu_percent())
+    speak(f"CPU is at {usage} percent.")
+    battery = psutil.sensors_battery()
+    percentage = battery.percent
+    speak(f"Boss, our system has {percentage} percent battery.")
+
+    if percentage >= 80:
+        speak("Boss, we have enough charge to continue recording.")
+    elif 40 <= percentage <= 75:
+        speak("Boss, we should connect the system to a charging point soon.")
+    else:
+        speak("Boss, battery is very low. Please plug in the charger or the recording may stop.")
+
 
 
 
@@ -308,7 +324,9 @@ if __name__ == "__main__":
                         speak(np.random.choice(i['responses']))
         elif ("open google" in query) or ("open edge" in query) or ("search" in query and "google" in query):
             browsing(query)
-
+        elif ("system condition" in query) or ("condition of the system" in query):
+            speak("Boss, let me check the system condition for you.")
+            condition()
         elif "exit" in query:
             sys.exit()
 
