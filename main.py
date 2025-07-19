@@ -12,8 +12,8 @@ from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from comtypes import CLSCTX_ALL
 import json
 import pickle
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import load_model # type: ignore
+from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
 import random
 import numpy as np
 import webbrowser
@@ -287,11 +287,11 @@ def condition():
     speak(f"Boss, our system has {percentage} percent battery.")
 
     if percentage >= 80:
-        speak("Boss, we have enough charge to continue recording.")
+        speak("Boss, we have enough charge to continue.")
     elif 40 <= percentage <= 75:
         speak("Boss, we should connect the system to a charging point soon.")
     else:
-        speak("Boss, battery is very low. Please plug in the charger or the recording may stop.")
+        speak("Boss, battery is very low. Please plug in the charger.")
 
 
 
