@@ -16,6 +16,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import random
 import numpy as np
+import webbrowser
 
 with open("intents.json") as file:
     data = json.load(file)
@@ -251,6 +252,31 @@ def closeApp(command):
             os.system(f'taskkill /f /im {apps[app]["process"]}')
             return
     speak("Application not recognized to close.")
+    
+    
+def browsing(query):
+    if 'search' in query and 'google' in query:
+        search_term = query.lower().split('search')[1].split('in google')[0].strip()
+        if search_term:
+            speak(f"Searching {search_term}")
+            webbrowser.open(f"https://www.google.com/search?q={search_term}")
+        else:
+            speak("What should I search on Google?")
+            s = command().lower()
+            if s.strip():
+                speak(f"Searching {s} on Google")
+                webbrowser.open(f"https://www.google.com/search?q={s}")
+            else:
+                speak("I didn't catch that. Please try again.")
+    
+    elif 'google' in query:
+        speak("What should I search on Google Boss?")
+        s = command().lower()
+        if s.strip():
+            speak(f"Searching {s}")
+            webbrowser.open(f"https://www.google.com/search?q={s}")
+        else:
+            speak("I didn't catch that. Please try again.")
 
 
 
@@ -280,6 +306,9 @@ if __name__ == "__main__":
                 for i in data['intents']:
                     if i['tag'] == tag:
                         speak(np.random.choice(i['responses']))
+        elif ("open google" in query) or ("open edge" in query) or ("search" in query and "google" in query):
+            browsing(query)
+
         elif "exit" in query:
             sys.exit()
 
