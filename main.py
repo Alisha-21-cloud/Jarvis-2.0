@@ -1,4 +1,5 @@
 import datetime
+from http import client
 import sys
 import time
 import webbrowser
@@ -18,6 +19,21 @@ import random
 import numpy as np
 import webbrowser
 import psutil 
+
+from dotenv import load_dotenv
+from elevenlabs import generate, play, set_api_key
+
+load_dotenv()
+set_api_key(os.getenv("ELEVEN_API_KEY"))
+
+
+def engine_talk(query):
+    audio = client.generate(
+        text=query,
+        voice="Grace",  # or use a voice ID
+        model="eleven_monolingual_v1"
+    )
+    play(audio)
 
 with open("intents.json") as file:
     data = json.load(file)
@@ -298,7 +314,7 @@ def condition():
 
 if __name__ == "__main__":
     # wishMe()
-    
+    engine_talk("Allow me to introduce myself I am Jarvis, the virtual artificial intelligence and I'm here to assist you with a variety of tasks as best I can, 24 hours a day seven days a week.")
     while True:
         # query = command().lower()
         query =input("Enter your command -> ")
